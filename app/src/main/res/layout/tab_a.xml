@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/colorPrimaryDark">
+    android:layout_height="100dp"
+    android:layout_centerVertical="false"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="horizontal">
 
-
-    <TextView
-        android:id="@+id/text_a"
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
-        android:text="Essa é a TAB A!!"
-        android:textColor="@color/branco"
-        android:textSize="42dp" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        android:background="@color/branco">
+    </ListView>
+
 </LinearLayout>

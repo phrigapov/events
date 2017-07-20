@@ -3,6 +3,7 @@ package com.example.paulo.events.Adapter
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.ListFragment
 import com.example.paulo.events.Tabs.TabA
 import com.example.paulo.events.Tabs.TabB
 import com.example.paulo.events.Tabs.TabC
