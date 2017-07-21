@@ -3,15 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:layout_centerVertical="false"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/fundo_tab"
     android:orientation="horizontal">
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
-        android:background="@color/branco">
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@color/branco"
+        android:divider="@color/fundo_tab"
+        android:dividerHeight="15.0sp">
     </ListView>
 
 </LinearLayout>
