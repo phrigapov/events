@@ -12,6 +12,7 @@ import android.app.FragmentManager
 import android.graphics.Color
 import android.view.View
 import com.example.paulo.events.R
+import com.example.paulo.events.Web_Service.NewsManager
 
 
 class TabC : android.support.v4.app.Fragment() {
@@ -32,6 +33,9 @@ class TabC : android.support.v4.app.Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view : View = activity.layoutInflater.inflate(R.layout.tab_c,container,false)
+
+        var vai = NewsManager()
+        println(vai.getNews());
 
         return view
     }

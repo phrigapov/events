@@ -35,4 +35,21 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:support-v4:26.0.0-beta1'
     implementation 'com.android.support:recyclerview-v7:26.0.0-beta1'
+
+    // RXJava
+    compile 'io.reactivex:rxjava:1.2.5'
+    // RXAndroid para termos acesso a main thread do Android
+    compile 'io.reactivex:rxandroid:1.2.1'
+    // Retrofit
+    compile "com.squareup.retrofit2:retrofit:$retrofit_version"
+    // Adapter do Retrofit para retornar objetos observáveis
+    compile "com.squareup.retrofit2:adapter-rxjava:$retrofit_version"
+    // Converter do Retrofit para utilizar o Gson para tratar a resposta do servidor
+    compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    // Interceptor para visualizar os logs das requisições do Retrofit
+    compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
+    compile "com.squareup.retrofit2:converter-moshi:2.0.0"
+    compile 'com.beust:klaxon:0.30'
+
+    compile 'junit:junit:4.12'
 }
