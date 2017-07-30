@@ -1,24 +1,33 @@
 package com.example.paulo.events.Web_Service
 
+import android.app.Activity
+import android.app.Dialog
 import android.os.AsyncTask
 import android.util.Log
 import android.widget.ListView
-import com.beust.klaxon.JsonArray
-import com.beust.klaxon.Parser
-import com.google.gson.JsonObject
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
+import com.example.paulo.events.Eventinhos
 import java.net.HttpURLConnection
 import java.net.URL
-import javax.xml.transform.Result
-import com.beust.klaxon.string
-import com.example.paulo.events.R
-import com.example.paulo.events.Tabs.AdapterEventos
 import com.example.paulo.events.Tabs.TabB
-import com.example.paulo.events.WebService.Evento_s
+import com.example.paulo.events.Evento_s
 import com.google.gson.Gson
+import android.app.ProgressDialog
+import android.content.Context
+import android.net.Uri
+//import android.support.test.espresso.core.deps.guava.io.Flushables.flush
+import android.support.v4.widget.SearchViewCompat.getQuery
+import com.example.paulo.events.Token
+import okhttp3.internal.Util
+import org.json.JSONObject
+//import com.sun.xml.internal.ws.streaming.XMLStreamWriterUtil.getOutputStream
+//import android.support.test.espresso.core.deps.guava.io.Flushables.flush
+//import com.sun.xml.internal.ws.streaming.XMLStreamWriterUtil.getOutputStream
+import java.io.*
+import java.nio.charset.StandardCharsets
+import javax.net.ssl.HttpsURLConnection
 
+
+//import sun.net.www.http.HttpClient
 
 
 
@@ -26,15 +35,48 @@ import com.google.gson.Gson
 /**
  * Created by Paulo on 23/07/2017.
  */
-class DownloadDados(var li : ListView,var adapter : TabB.AdapterEventos): AsyncTask<Void, Void, String>() {
-    @Override
+class DownloadDados(var callback :  (List<Eventinhos>) -> Unit,var activity: Activity): AsyncTask<Void, Void, String>() {
+
+    val dialog= ProgressDialog(activity)
+
+
     override fun doInBackground(vararg params: Void?): String? {
         // Esta etapa é usada para executar a tarefa em background ou fazer a chamada para o webservice
+
+        var user = "admin@admin.com"
+        var pass = "admin"
+        val urlLogin = URL("https://ph-events.herokuapp.com/api/auth/login")
+        val urlConLogin = urlLogin.openConnection() as HttpURLConnection
+        //urlConLogin.setDoOutput(true)
+        urlConLogin.setRequestMethod("POST")
+        urlConLogin.addRequestProperty("Content-Type","application/x-www-form-urlencoded")
+
+        val urlParameters = "username="+user+"&password="+pass
+        //val postData = urlParameters.getBytes(StandardCharsets.UTF_8)
+        var outputInBytes = urlParameters.toByteArray()
+        val os = urlConLogin.getOutputStream()
+
+        os.write(outputInBytes)
+        os.close()
+
+        urlConLogin.connect()
+
+        println(urlConLogin.responseCode)
+
+        val resultLogin = urlConLogin.getInputStream()
+        val readerLogin = BufferedReader(InputStreamReader(resultLogin))
+        urlConLogin.disconnect()
+        var tkbuff : String = readerLogin.readLine()
+
+        val gsonT = Gson()
+        val token = gsonT.fromJson(tkbuff, Token::class.java)
+
+
         var result : String
         val url = URL("https://ph-events.herokuapp.com/api/events")
         val urlConnection = url.openConnection() as HttpURLConnection
         urlConnection.setRequestMethod("GET")
-        urlConnection.setRequestProperty("Authorization","Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MDE4MTAyNTksImlhdCI6MTUwMDYwMDY1OSwic3ViIjoxfQ.5WihjhyPcLeAf5q76WlSXBTDrqdoEp-Nw5Ov0aNTp_E")
+        urlConnection.setRequestProperty("Authorization","Bearer "+token.token)
         urlConnection.connect()
         val inputStream = urlConnection.getInputStream()
         if (inputStream == null)
@@ -52,7 +94,7 @@ class DownloadDados(var li : ListView,var adapter : TabB.AdapterEventos): AsyncT
         }
         var JsonResponse: String? = null
         JsonResponse = linha.toString();
-//response data
+        //response data
         Log.i("o/p:", JsonResponse);
         //return linha
         result = linha
@@ -80,6 +122,13 @@ class DownloadDados(var li : ListView,var adapter : TabB.AdapterEventos): AsyncT
     @Override
     protected override fun onPreExecute() {
         // Este passo é usado para configurar a tarefa, por exemplo, mostrando uma barra de progresso na interface do usuário.
+
+        dialog.setMessage("Carregando Eventos")
+        dialog.setTitle("Aguarde")
+        dialog.setCancelable(false)
+        dialog.isIndeterminate=true
+        dialog.show()
+
     }
 
 
@@ -89,28 +138,15 @@ class DownloadDados(var li : ListView,var adapter : TabB.AdapterEventos): AsyncT
 
 
 
-        val parser: Parser = Parser()
-        val stringBuilder: StringBuilder = StringBuilder(result)
-        val json: com.beust.klaxon.JsonObject = parser.parse(stringBuilder) as com.beust.klaxon.JsonObject
-         //var ba = 'pokemon'
-
-        //println("var : ${json.string("events")}")
-
-        //val array = parser.parse(stringBuilder) as JsonArray<com.beust.klaxon.JsonObject>
-        //println(array["a"])
-
         val gson = Gson()
         //val jsonInString = "{'name' : 'mkyong'}"
         val ev = gson.fromJson(result, Evento_s::class.java)
-
+        callback(ev.events)
 
         println(ev.events[1])
 
-        var adp : TabB.AdapterEventos = adapter
 
-        adp.atualizaEventos(result as String)
-
-
+        dialog.dismiss()
 
     }
 }

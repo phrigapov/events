@@ -1,18 +1,13 @@
 package com.example.paulo.events.Tabs
 
-import android.graphics.Color.parseColor
-import android.R.id.tabs
-import android.support.v4.view.ViewPager
 import android.os.Bundle
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import com.example.paulo.events.MainActivity
 import android.app.Activity
 import android.app.FragmentManager
-import android.graphics.Color
 import android.view.View
 import com.example.paulo.events.R
-import com.example.paulo.events.Web_Service.NewsManager
 
 
 class TabC : android.support.v4.app.Fragment() {
@@ -34,8 +29,8 @@ class TabC : android.support.v4.app.Fragment() {
         // Inflate the layout for this fragment
         val view : View = activity.layoutInflater.inflate(R.layout.tab_c,container,false)
 
-        var vai = NewsManager()
-        println(vai.getNews());
+
+
 
         return view
     }

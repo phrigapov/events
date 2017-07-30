@@ -4,5 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="branco">#FFF</color>
-    <color name="fundo_tab">#dbdbdb</color>
+    <color name="fundo_tab">#f2f2f2</color>
+    <color name="sombra">#eaeaea</color>
+    <color name="gastronomia">#ffad32</color>
+    <color name="tecnologia">#30b3fa</color>
 </resources>

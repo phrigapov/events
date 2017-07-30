@@ -12,40 +12,48 @@ import android.view.MenuItem
 import com.example.paulo.events.Adapter.MyTabAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import android.content.Intent
+
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        //var a = false
+        //setContentView(R.layout.activity_login)
 
-       /* fab.setOnClickListener { view ->
+        //if (a) {
+            setContentView(R.layout.activity_main)
+            setSupportActionBar(toolbar)
+
+            /* fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }*/
 
-        var mTabLayout = findViewById<TabLayout>(R.id.tab_layout) as TabLayout
-        var mPagerView = findViewById<ViewPager>(R.id.view_pager) as ViewPager
+            var mTabLayout = findViewById<TabLayout>(R.id.tab_layout) as TabLayout
+            var mPagerView = findViewById<ViewPager>(R.id.view_pager) as ViewPager
 
-        var nstring = ArrayList<String>()
-        nstring.add("Todos")
-        nstring.add("Meus Eventos")
-        nstring.add("Convites")
-
-
-        var pg : MyTabAdapter = MyTabAdapter(getSupportFragmentManager(),nstring)
-        mPagerView.adapter = pg
-        mTabLayout.setupWithViewPager(mPagerView)
+            var nstring = ArrayList<String>()
+            nstring.add("Todos")
+            nstring.add("Meus Eventos")
+            nstring.add("Convites")
 
 
+            var pg: MyTabAdapter = MyTabAdapter(getSupportFragmentManager(), nstring)
+            mPagerView.adapter = pg
+            mTabLayout.setupWithViewPager(mPagerView)
 
-        val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawer_layout.addDrawerListener(toggle)
-        toggle.syncState()
 
-        nav_view.setNavigationItemSelectedListener(this)
+            val toggle = ActionBarDrawerToggle(
+                    this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+            drawer_layout.addDrawerListener(toggle)
+            toggle.syncState()
+
+            nav_view.setNavigationItemSelectedListener(this)
+       // }
     }
 
     override fun onBackPressed() {
@@ -87,11 +95,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.nav_send -> {
-
+                val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
             }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
 }

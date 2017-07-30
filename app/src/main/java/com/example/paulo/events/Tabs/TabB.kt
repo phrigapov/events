@@ -1,31 +1,36 @@
 package com.example.paulo.events.Tabs
 
 import android.app.Activity
+import android.app.Dialog
 import android.app.FragmentManager
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
+import android.os.Debug
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.paulo.events.MainActivity
-import com.example.paulo.events.R
-import com.example.paulo.events.WebService.StarWarsApi
-import org.junit.experimental.results.ResultMatchers.isSuccessful
-import retrofit2.*
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
 import android.os.StrictMode
+import android.support.v4.content.ContextCompat
+import android.support.v7.widget.DialogTitle
+import android.util.Log
 import android.widget.*
-import com.example.paulo.events.Eventos
-import com.example.paulo.events.WebService.Evento_s
+import com.example.paulo.events.*
 import com.example.paulo.events.Web_Service.DownloadDados
 import com.google.gson.Gson
+import java.text.DateFormat
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
+import android.widget.Toast
+import android.view.MotionEvent
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
+
+
+
+
 
 
 class TabB : android.support.v4.app.Fragment() {
@@ -58,51 +63,38 @@ class TabB : android.support.v4.app.Fragment() {
         //val listaDeIcones = findViewById<ListView>(R.id.lista) as ListView
         var sList = todosOsEventos()
 
+
         //var oadapter : ArrayAdapter<String> = ArrayAdapter(this, simple_list_item_1,outraLista)
-        var oadapter: com.example.paulo.events.Tabs.TabB.AdapterEventos = com.example.paulo.events.Tabs.TabB.AdapterEventos(sList, activity,false,"vazio")
+        var oadapter: AdapterEventosB = AdapterEventosB(activity,false)
 
         listaDeEventos.adapter = oadapter
 
-        /* listView = ListView(myContext)
+        listaDeEventos.setOnItemClickListener(
+                OnItemClickListener { parent, view, position, id ->
+                    println("clicado "+position)
+                    val intent = Intent(activity, Evento::class.java)
+                    startActivity(intent)
+                })
 
-        movieAdapter = ArrayAdapter(myContext,
-                android.R.layout.simple_list_item_1, movies)
-        listView.adapter = movieAdapter
-
-        movies.add("teste")
-        movies.add("teste")
-        movies.add("teste")
-        movies.add("teste")
-
-        val api = StarWarsApi()
-        api.loadEventos()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe ({ event ->
-            movies.add("${event.status}")
-        }, { e ->
-            e.printStackTrace()
-        },{
-            movieAdapter.notifyDataSetChanged()
-        })*/
-
-
-        /*api.loadEventos()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe ({ movie ->
-            movies.add("${movie.title} -- ${movie.episodeId}")
-        }, { e ->
-            e.printStackTrace()
-        },{
-            movieAdapter.notifyDataSetChanged()
-        })*/
 
         if (android.os.Build.VERSION.SDK_INT > 9) {
             val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(policy)
         }
-        var url = null
-        var DownloadDados = DownloadDados(listaDeEventos,oadapter).execute(url)
-        println(DownloadDados)
+
+        val showEvents: (List<Eventinhos>) -> Unit = fun(events : List<Eventinhos>){
+            oadapter.content = events
+            oadapter.notifyDataSetChanged()
+        }
+        var DownloadDados = DownloadDados(showEvents,activity).execute(null)
+
 
 
         return view
     }
+
+
+
 
     fun todosOsEventos(): ArrayList<Eventos> {
         return ArrayList(Arrays.asList(
@@ -111,15 +103,15 @@ class TabB : android.support.v4.app.Fragment() {
                 Eventos("Curso de responsabilidade", "Administração", 12)))
     }
 
-    data class AdapterEventos(var eventos: MutableList<Eventos>, var act: Activity, var isEditing: Boolean, var content : String) : BaseAdapter() {
+    data class AdapterEventosB(var act: Activity, var isEditing: Boolean, var content : List<Eventinhos> = ArrayList()) : BaseAdapter() {
 
         override fun getCount(): Int {
-            return eventos.size
+            return content.size
         }
 
         //Usando um opcional ? na frente do Any, dizemos que o retorno pode ser Any ou Null
         override fun getItem(position: Int): Any? {
-            return eventos.get(position)
+            return content.get(position)
         }
 
         override fun getItemId(position: Int): Long {
@@ -128,25 +120,52 @@ class TabB : android.support.v4.app.Fragment() {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
             val view: View = act.layoutInflater.inflate(R.layout.b, parent, false)
-            var evento: Eventos = eventos.get(position)
+            //var evento: Eventos = eventos.get(position)
 
             //Montando o layout da view
             var nome: TextView = view.findViewById<TextView>(R.id.nome)
             var descricao : TextView = view.findViewById(R.id.descricao)
+            var data : TextView = view.findViewById(R.id.data)
+            var barra : ImageView = view.findViewById(R.id.barra)
+            var catImg : ImageView = view.findViewById(R.id.cat_img)
+            var anoHora : TextView = view.findViewById(R.id.ano)
+            var cat : TextView = view.findViewById(R.id.categoria)
 
 
             // populando as Views
 
-            if (content != "vazio"){
-                val gson = Gson()
-                //val jsonInString = "{'name' : 'mkyong'}"
-                val ev = gson.fromJson(content, Evento_s::class.java)
+            if (content is List<Eventinhos>){
 
-                nome.setText(ev.events[position].title)
-                descricao.setText(ev.events[position].description)
+                nome.setText(content[position].title)
+                descricao.setText(content[position].description)
+
+                println(content[position].datetime)
+
+                //arrumando a data
+                var ff = SimpleDateFormat("dd.MM")
+                var dataff = ff.format(content[position].datetime)
+                data.setText(dataff)
+
+                var anof = SimpleDateFormat("yyyy \n'às' HH'h'mm")
+                var dataffa = anof.format(content[position].datetime)
+                anoHora.setText(dataffa)
+
+                if((position%2) == 0) {
+                    barra.setBackgroundColor(ContextCompat.getColor(act,R.color.tecnologia))
+                    nome.setTextColor(ContextCompat.getColor(act,R.color.tecnologia))
+                    catImg.setImageResource(R.drawable.tec)
+                    cat.setText("Tecnologia")
+                } else {
+                    barra.setBackgroundColor(ContextCompat.getColor(act,R.color.gastronomia))
+                    nome.setTextColor(ContextCompat.getColor(act,R.color.gastronomia))
+                    catImg.setImageResource(R.drawable.gas)
+                    cat.setText("Gastronomia")
+                }
+
+
 
             }else {
-                nome.setText(evento.nome)
+                nome.setText("nada")
             }
 
             isEditing = false
@@ -155,21 +174,32 @@ class TabB : android.support.v4.app.Fragment() {
             //imagem.setImageResource()
 
 
-            println("foi")
+
             return view
 
-        }
-
-        fun atualizaEventos(ev : String){
-            println("passou")
-            content = ev
-            this.notifyDataSetChanged()
-
 
         }
+
+
+
 
     }
 
 
+
+/*fun arrumaData(data : String) : Date {
+    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    try {
+        val date = format.parse(data)
+        return date
+    } catch (e: ParseException) {
+        // TODO Auto-generated catch block
+        e.printStackTrace()
+    }
+
+}*/
+
 }
+
+
 

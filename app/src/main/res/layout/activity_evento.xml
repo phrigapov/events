@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/evento_img"
+        android:layout_width="match_parent"
+        android:layout_height="205dp"
+
+        android:background="@color/colorAccent" />
+
+
+    <TextView
+        android:id="@+id/evento_nome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/evento_img"
+        android:text="Titulo"
+        android:textColor="@color/gastronomia"
+        android:textSize="22dp" />
+
+
+
+</LinearLayout>
