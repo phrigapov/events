@@ -2,10 +2,11 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff4081</color>
     <color name="branco">#FFF</color>
     <color name="fundo_tab">#f2f2f2</color>
     <color name="sombra">#eaeaea</color>
     <color name="gastronomia">#ffad32</color>
     <color name="tecnologia">#30b3fa</color>
+    <color name="aplicacao">#c0392b</color>
 </resources>

@@ -1,153 +1,89 @@
 package com.example.paulo.events.Web_Service
 
 import android.app.Activity
-import android.app.Dialog
 import android.os.AsyncTask
-import android.util.Log
-import android.widget.ListView
-import com.example.paulo.events.Eventinhos
-import java.net.HttpURLConnection
-import java.net.URL
-import com.example.paulo.events.Tabs.TabB
-import com.example.paulo.events.Evento_s
-import com.google.gson.Gson
 import android.app.ProgressDialog
-import android.content.Context
-import android.net.Uri
-//import android.support.test.espresso.core.deps.guava.io.Flushables.flush
-import android.support.v4.widget.SearchViewCompat.getQuery
-import com.example.paulo.events.Token
-import okhttp3.internal.Util
-import org.json.JSONObject
-//import com.sun.xml.internal.ws.streaming.XMLStreamWriterUtil.getOutputStream
-//import android.support.test.espresso.core.deps.guava.io.Flushables.flush
-//import com.sun.xml.internal.ws.streaming.XMLStreamWriterUtil.getOutputStream
-import java.io.*
-import java.nio.charset.StandardCharsets
-import javax.net.ssl.HttpsURLConnection
-
-
-//import sun.net.www.http.HttpClient
-
-
+import com.example.paulo.events.API.EventManagerAPI
+import com.example.paulo.events.Entities.Event
+import com.example.paulo.events.Entities.EventAPI
+import com.example.paulo.events.db.database
+import org.jetbrains.anko.db.*
+import android.support.v4.widget.SwipeRefreshLayout
+import com.example.paulo.events.R
 
 
 /**
  * Created by Paulo on 23/07/2017.
  */
-class DownloadDados(var callback :  (List<Eventinhos>) -> Unit,var activity: Activity): AsyncTask<Void, Void, String>() {
+class DownloadEvents(var callback :  (List<EventAPI>) -> Unit, var activity: Activity): AsyncTask<Void, Void, List<EventAPI>>() {
 
     val dialog= ProgressDialog(activity)
+    var mTabLayout = activity.findViewById<com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationView>(R.id.tab_layout2) as com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationView
 
-
-    override fun doInBackground(vararg params: Void?): String? {
-        // Esta etapa é usada para executar a tarefa em background ou fazer a chamada para o webservice
-
-        var user = "admin@admin.com"
-        var pass = "admin"
-        val urlLogin = URL("https://ph-events.herokuapp.com/api/auth/login")
-        val urlConLogin = urlLogin.openConnection() as HttpURLConnection
-        //urlConLogin.setDoOutput(true)
-        urlConLogin.setRequestMethod("POST")
-        urlConLogin.addRequestProperty("Content-Type","application/x-www-form-urlencoded")
-
-        val urlParameters = "username="+user+"&password="+pass
-        //val postData = urlParameters.getBytes(StandardCharsets.UTF_8)
-        var outputInBytes = urlParameters.toByteArray()
-        val os = urlConLogin.getOutputStream()
-
-        os.write(outputInBytes)
-        os.close()
-
-        urlConLogin.connect()
-
-        println(urlConLogin.responseCode)
-
-        val resultLogin = urlConLogin.getInputStream()
-        val readerLogin = BufferedReader(InputStreamReader(resultLogin))
-        urlConLogin.disconnect()
-        var tkbuff : String = readerLogin.readLine()
-
-        val gsonT = Gson()
-        val token = gsonT.fromJson(tkbuff, Token::class.java)
-
-
-        var result : String
-        val url = URL("https://ph-events.herokuapp.com/api/events")
-        val urlConnection = url.openConnection() as HttpURLConnection
-        urlConnection.setRequestMethod("GET")
-        urlConnection.setRequestProperty("Authorization","Bearer "+token.token)
-        urlConnection.connect()
-        val inputStream = urlConnection.getInputStream()
-        if (inputStream == null)
-        {
-            return null
-        }
-        val reader = BufferedReader(InputStreamReader(inputStream))
-        var linha:String
-        val buffer = StringBuffer()
-        linha = reader.readLine()
-        while ((reader.readLine()) != null) {
-
-            buffer.append(linha + "\n");
-
-        }
-        var JsonResponse: String? = null
-        JsonResponse = linha.toString();
-        //response data
-        Log.i("o/p:", JsonResponse);
-        //return linha
-        result = linha
-        if (buffer.length == 0)
-        {
-            return result
-        }
-
-        if (urlConnection != null)
-        {
-            urlConnection.disconnect()
-        }
-        if (reader != null)
-        {
-            try
-            {
-                reader.close()
-            }
-            catch (e: IOException) {
-                Log.e("Erro", "Erro fechando o stream", e)
-            }
-        }
-        return null
+    override fun doInBackground(vararg params: Void?): List<EventAPI>? {
+        val events = EventManagerAPI.getSharedInstance().getEvents()
+        return events
     }
-    @Override
-    protected override fun onPreExecute() {
-        // Este passo é usado para configurar a tarefa, por exemplo, mostrando uma barra de progresso na interface do usuário.
 
+    override fun onPreExecute() {
+       //TODO: Substituir esse cara depois, ANKO
         dialog.setMessage("Carregando Eventos")
         dialog.setTitle("Aguarde")
         dialog.setCancelable(false)
         dialog.isIndeterminate=true
         dialog.show()
-
+        mTabLayout.selectTab(1)
     }
 
+    override fun onPostExecute(result: List<EventAPI>?) {
 
-    override protected fun onPostExecute(result: String?) {
-        // O resultado da execução em background é passado para este passo como um parâmetro.
-        println(result)
+       activity.database.use{
+            if (result != null) {
+                dropTable("events",true)
+                createTable("events", true,
+                        "id" to INTEGER + PRIMARY_KEY,
+                        "title" to TEXT,
+                        "description" to TEXT,
+                        "summary" to TEXT,
+                        "image_url" to TEXT,
+                        "is_public" to TEXT,
+                        "datetime" to TEXT,
+                        "owner_id" to INTEGER,
+                        "category_id" to INTEGER,
+                        "category_name" to TEXT,
+                        "category_image_url" to TEXT,
+                        "hex_color" to TEXT)
 
 
+                for (item in result) {
+                    //println(item.datetime.toString())
+                    insert("events",
+                            "id" to item.id,
+                            "title" to item.title,
+                            "description" to item.description,
+                            "summary" to item.summary,
+                            "image_url" to item.image_url,
+                            "is_public" to item.isPublic,
+                            "datetime" to item.datetime,
+                            "owner_id" to item.ownerdId,
+                            "category_id" to item.category?.id,
+                            "category_name" to item.category?.name,
+                            "category_image_url" to item.category?.imageurl,
+                            "hex_color" to item.category?.hex_color)
+                }
+            }
+        }
 
-        val gson = Gson()
-        //val jsonInString = "{'name' : 'mkyong'}"
-        val ev = gson.fromJson(result, Evento_s::class.java)
-        callback(ev.events)
-
-        println(ev.events[1])
-
+        if (result != null) {
+            callback(result)
+        } else {
+            //TODO: exibir tela de erro
+            callback(ArrayList<EventAPI>())
+        }
 
         dialog.dismiss()
 
+        mTabLayout.selectTab(0)
+
     }
 }
-

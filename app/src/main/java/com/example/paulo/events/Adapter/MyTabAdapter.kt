@@ -13,18 +13,20 @@ import com.example.paulo.events.Tabs.TabC
  */
 class MyTabAdapter(fm: FragmentManager?, var nTableTitles: ArrayList<String>) : FragmentPagerAdapter(fm) {
 
+    val FragmentA : TabA = TabA()
+    val FragmentB : TabB = TabB()
+
 
     override fun getItem(position: Int): Fragment {
         when(position) {
-            0 -> return TabA()
-            1 -> return TabB()
-            else -> return TabC()
+            0 -> return FragmentB
+            else -> return FragmentA
         }
     }
 
 
     override fun getCount(): Int {
-        return 3
+        return nTableTitles.size
     }
 
 
