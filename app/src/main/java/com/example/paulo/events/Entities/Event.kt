@@ -12,14 +12,14 @@ data class EventsServerResponse (@SerializedName("code")var code : Int, @Seriali
 data class Result (@SerializedName("events")var events : List<EventAPI>) {
 }
 
-data class EventAPI (@SerializedName("id")var id : Int, @SerializedName("title")var title : String, @SerializedName("description")var description : String,@SerializedName("summary")var summary : String?,@SerializedName("image_url")var image_url : String?,
-                           @SerializedName("is_public")var isPublic : String?, @SerializedName("datetime")var datetime : String?,
+data class EventAPI (@SerializedName("id")var id : Int, @SerializedName("title")var title : String, @SerializedName("description")var description : String,@SerializedName("summary")var summary : String?,@SerializedName("location")var location : String?,
+                     @SerializedName("image_url")var image_url : String?,@SerializedName("is_public")var isPublic : String?, @SerializedName("datetime")var datetime : String?,
                            @SerializedName("owner_id")var ownerdId : Int?, @SerializedName("category")var category : Category?)
 
 data class Category (@SerializedName("id")var id : Int, @SerializedName("name")var name : String, @SerializedName("image_url")var imageurl : String, @SerializedName("hex_color")var hex_color : String) {
 }
 
-data class Event (@SerializedName("id")var id : Int, @SerializedName("title")var title : String, @SerializedName("description")var description : String,@SerializedName("summary")var summary : String?,@SerializedName("image_url")var image_url : String?,
+data class Event (@SerializedName("id")var id : Int, @SerializedName("title")var title : String, @SerializedName("description")var description : String,@SerializedName("summary")var summary : String?,@SerializedName("location")var location : String?,@SerializedName("image_url")var image_url : String?,
                      @SerializedName("is_public")var isPublic : String?, @SerializedName("datetime")var datetime : String?,
                      @SerializedName("owner_id")var ownerdId : Int?,
                      @SerializedName("category_id")var category_id : Int?, @SerializedName("category_name")var category_name : String?,

@@ -124,16 +124,18 @@ class TabB : android.support.v4.app.Fragment(), SwipeRefreshLayout.OnRefreshList
         listaDeEventos.setOnItemClickListener(
                 AdapterView.OnItemClickListener { parent, view, position, id ->
                     val evt = takeEvents()
-                    println("clicado " + position)
+
                     val intent = Intent(activity, Evento::class.java)
-                    intent.putExtra("nome", evt[position].title);
-                    intent.putExtra("data", evt[position].datetime);
-                    intent.putExtra("categoria", evt[position].category_name);
-                    intent.putExtra("categoria_image_url", evt[position].category_image_url);
-                    intent.putExtra("image_url", evt[position].image_url);
-                    intent.putExtra("hex_color", evt[position].hex_color);
+                    intent.putExtra("nome", evt[position].title)
+                    intent.putExtra("data", evt[position].datetime)
+                    intent.putExtra("categoria", evt[position].category_name)
+                    intent.putExtra("categoria_image_url", evt[position].category_image_url)
+                    intent.putExtra("image_url", evt[position].image_url)
+                    intent.putExtra("hex_color", evt[position].hex_color)
                     intent.putExtra("id",evt[position].id.toString())
-                    intent.putExtra("descricao", evt[position].description);
+                    intent.putExtra("descricao", evt[position].description)
+                    intent.putExtra("sumario", evt[position].summary)
+                    intent.putExtra("location", evt[position].location)
                     startActivity(intent)
                 })
 

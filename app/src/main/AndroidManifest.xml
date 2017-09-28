@@ -39,8 +39,11 @@
         </activity>
         <activity
             android:name=".Evento"
-            android:theme="@style/AppTheme.ph">
-        </activity>
+            android:theme="@style/AppTheme.ph"></activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme.ph"></activity>
     </application>
 
 </manifest>

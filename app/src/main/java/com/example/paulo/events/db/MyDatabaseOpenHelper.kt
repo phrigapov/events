@@ -26,6 +26,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "MyiData
                 "title" to TEXT,
                 "description" to TEXT,
                 "summary" to TEXT,
+                "location" to TEXT,
                 "image_url" to TEXT,
                 "is_public" to TEXT,
                 "datetime" to TEXT,

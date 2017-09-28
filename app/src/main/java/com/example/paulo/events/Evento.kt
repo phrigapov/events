@@ -44,6 +44,8 @@ import org.jetbrains.anko.contentView
 
 class Evento : AppCompatActivity() {
 
+    lateinit var data : Date
+
     @SuppressLint("WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,24 +74,6 @@ class Evento : AppCompatActivity() {
         evDescricao.loadData("<style>img{display: inline;height: auto;max-width: 100%;}</style>" + intent.getStringExtra("descricao"), "text/html", "UTF-8")
 
 
-        /*evDescricao!!.setWebChromeClient(WebChromeClient())
-        evDescricao.setWebViewClient(object : WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-
-                println(evDescricao.height.toString())
-                val height: Int = android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-
-                    println(height)
-
-
-
-                //rela.layoutParams.height = evDescricao.height
-
-            }
-        })*/
-
-
         evDescricao.visibility= View.VISIBLE
 
 
@@ -99,6 +83,7 @@ class Evento : AppCompatActivity() {
         FormatString.timeZone = (TimeZone.getTimeZone(TimeZone.getDefault().id.toLowerCase()))
         val dataString = intent.getStringExtra("data")
         val date = FormatString.parse(dataString)
+        data = date
 
         var evData: TextView = findViewById(R.id.evento_data)
         var ff = SimpleDateFormat("dd.MM")
@@ -112,6 +97,9 @@ class Evento : AppCompatActivity() {
 
         var evCategoria: TextView = findViewById(R.id.evento_categoria)
         evCategoria.setText(intent.getStringExtra("categoria"))
+
+        var evLocation: TextView = findViewById(R.id.evento_location)
+        evLocation.setText("Localização: "+intent.getStringExtra("location"))
 
         var evCategoriaImgIc: ImageView = findViewById(R.id.evento_cat_img)
         Picasso.with(act).load(intent.getStringExtra("categoria_image_url")).into(evCategoriaImgIc)
@@ -262,15 +250,16 @@ class Evento : AppCompatActivity() {
             var cr : ContentResolver = getContentResolver()
             var values : ContentValues = ContentValues()
             var now = System.currentTimeMillis()
-            values.put(CalendarContract.Events.DTSTART, now);
-            values.put(CalendarContract.Events.DTEND, now + 3600*1000 /* one hour later */)
+            values.put(CalendarContract.Events.DTSTART, data.time)
+            values.put(CalendarContract.Events.DTEND, data.time)
             values.put(CalendarContract.Events.TITLE, intent.getStringExtra("nome"))
-            values.put(CalendarContract.Events.DESCRIPTION, intent.getStringExtra("descricao"))
+            values.put(CalendarContract.Events.DESCRIPTION, intent.getStringExtra("sumario"))
             values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID())
+            values.put(CalendarContract.Events.EVENT_COLOR,Color.parseColor(intent.getStringExtra("hex_color")))
             // default calendar
             values.put(CalendarContract.Events.CALENDAR_ID, 1)
             val uri = cr.insert(Events.CONTENT_URI, values)
-            //act.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values);
+
 
             val eventID = java.lang.Long.parseLong(uri.lastPathSegment)
 

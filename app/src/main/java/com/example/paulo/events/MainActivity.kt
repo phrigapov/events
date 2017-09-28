@@ -1,9 +1,7 @@
 package com.example.paulo.events
 
-import android.app.Fragment
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.design.widget.TabLayout
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.ActionBarDrawerToggle
@@ -12,22 +10,12 @@ import android.view.Menu
 import android.view.MenuItem
 import com.example.paulo.events.Adapter.MyTabAdapter
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
 import android.content.Intent
-import android.graphics.Color
 import android.os.PersistableBundle
-import android.support.design.widget.BottomNavigationView
-import android.support.v4.content.ContextCompat
 import kotlinx.android.synthetic.main.screen.*
-import java.lang.reflect.Array
 import android.support.v4.view.ViewPager.OnPageChangeListener
-import android.support.v4.widget.SwipeRefreshLayout
-import android.view.View
-import android.widget.Toolbar
-import android.widget.TextView
 import com.example.paulo.events.Tabs.TabB
 import org.jetbrains.anko.act
-import org.jetbrains.anko.contentView
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -156,6 +144,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
             R.id.nav_share -> {
+                val intent = Intent(act, SettingsActivity::class.java)
+                startActivity(intent)
+                //finish()
+
 
             }
             R.id.nav_send -> {

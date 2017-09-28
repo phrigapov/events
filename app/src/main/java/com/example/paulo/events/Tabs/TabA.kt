@@ -113,17 +113,19 @@ class TabA : android.support.v4.app.Fragment(), SwipeRefreshLayout.OnRefreshList
                     val evt = takeEvents()
                     println("clicado " + position)
                     val intent = Intent(activity, Evento::class.java)
-                    intent.putExtra("nome", evt[position].title);
+                    intent.putExtra("nome", evt[position].title)
 
-                    intent.putExtra("data", evt[position].datetime);
-                    intent.putExtra("categoria", evt[position].category_name);
-                    intent.putExtra("categoria_image_url", evt[position].category_image_url);
-                    intent.putExtra("image_url", evt[position].image_url);
-                    intent.putExtra("hex_color", evt[position].hex_color);
+                    intent.putExtra("data", evt[position].datetime)
+                    intent.putExtra("categoria", evt[position].category_name)
+                    intent.putExtra("categoria_image_url", evt[position].category_image_url)
+                    intent.putExtra("image_url", evt[position].image_url)
+                    intent.putExtra("hex_color", evt[position].hex_color)
                     var tag = view.findViewById<TextView>(R.id.evento_tag)
 
                     intent.putExtra("id",tag.text)
-                    intent.putExtra("descricao", evt[position].description);
+                    intent.putExtra("descricao", evt[position].description)
+                    intent.putExtra("sumario", evt[position].summary)
+                    intent.putExtra("location", evt[position].location)
                     startActivity(intent)
                 })
 
@@ -133,7 +135,7 @@ class TabA : android.support.v4.app.Fragment(), SwipeRefreshLayout.OnRefreshList
     fun takeEventsDB(){
         context.database.use {
             val parser = classParser<Event>()
-            var result = select("events,events_fav", "events.id,title,description,summary,image_url,is_public,datetime,owner_id," +
+            var result = select("events,events_fav", "events.id,title,description,summary,location,image_url,is_public,datetime,owner_id," +
                     "category_id,category_name,category_image_url,hex_color")
                     .whereArgs("( events.id = events_fav.id and events_fav.fav = 1 )").orderBy("datetime",SqlOrderDirection.ASC).parseList(parser)
             adapter?.content = result
